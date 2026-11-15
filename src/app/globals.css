@@ -1,26 +1,280 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #0b1220;
+  --bg-soft: #111a2e;
+  --panel: #152038;
+  --panel-2: #1b2945;
+  --border: #26365a;
+  --text: #e6ecf7;
+  --muted: #93a3c1;
+  --accent: #f5a524;
+  --accent-2: #38bdf8;
+  --link: #7cc4ff;
+  --danger: #f87171;
+  --ok: #4ade80;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--bg);
+  --color-bg-soft: var(--bg-soft);
+  --color-panel: var(--panel);
+  --color-panel-2: var(--panel-2);
+  --color-border: var(--border);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-link: var(--link);
+  --color-danger: var(--danger);
+  --color-ok: var(--ok);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background:
+    radial-gradient(1200px 500px at 50% -200px, #1d3260 0%, transparent 70%),
+    var(--bg);
+  color: var(--text);
+}
+
+a {
+  color: var(--link);
+}
+
+@utility card {
+  @apply rounded-xl border border-border bg-panel;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50;
+}
+@utility btn-primary {
+  @apply btn bg-accent text-black hover:brightness-110;
+}
+@utility btn-ghost {
+  @apply btn border border-border bg-panel-2 text-text hover:border-accent-2;
+}
+@utility btn-danger {
+  @apply btn bg-danger/90 text-black hover:bg-danger;
+}
+
+@utility input {
+  @apply w-full rounded-lg border border-border bg-bg-soft px-3 py-2 text-sm text-text outline-none placeholder:text-muted focus:border-accent-2;
+}
+@utility label {
+  @apply mb-1 block text-xs font-medium uppercase tracking-wide text-muted;
+}
+
+/* ------------------------------------------------------------------ */
+/* Imported wiki article HTML                                          */
+/* ------------------------------------------------------------------ */
+.wiki-content {
+  line-height: 1.65;
+  /* break long words only when they truly don't fit — never letter-by-letter inside table cells */
+  overflow-wrap: break-word;
+  min-width: 0;
+}
+.wiki-content a {
+  color: var(--link);
+  text-decoration: none;
+}
+.wiki-content a:hover {
+  text-decoration: underline;
+}
+.wiki-content a.redlink {
+  color: #f59e9e;
+}
+.wiki-content p {
+  margin: 0.6em 0;
+}
+.wiki-content h1,
+.wiki-content h2 {
+  margin: 1.4em 0 0.5em;
+  padding-bottom: 0.25em;
+  border-bottom: 1px solid var(--border);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+.wiki-content h3 {
+  margin: 1.1em 0 0.4em;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+.wiki-content h4,
+.wiki-content h5 {
+  margin: 1em 0 0.3em;
+  font-weight: 600;
+}
+.wiki-content ul {
+  list-style: disc;
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+.wiki-content ol {
+  list-style: decimal;
+  padding-left: 1.5em;
+  margin: 0.5em 0;
+}
+.wiki-content dl dt {
+  font-weight: 600;
+}
+.wiki-content dd {
+  margin-left: 1.5em;
+}
+.wiki-content img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  vertical-align: middle;
+}
+.wiki-content table {
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  max-width: 100%;
+}
+/* Wide data tables scroll inside their own box instead of widening the page */
+.wiki-content table {
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.wiki-content table > tbody {
+  display: table;
+  width: 100%;
+}
+
+/* Phones: undo the source wiki's desktop layout */
+@media (max-width: 767px) {
+  .wiki-content [style*="width"]:not(img):not(td):not(th) {
+    width: auto !important;
+    max-width: 100% !important;
+  }
+  .wiki-content [style*="float"],
+  .wiki-content .floatright,
+  .wiki-content .tright {
+    float: none !important;
+    margin-left: 0 !important;
+  }
+  .wiki-content [style*="column-count"] {
+    column-count: 2 !important;
+  }
+  .wiki-content td,
+  .wiki-content th {
+    min-width: 3.5rem;
+  }
+  /* page-level layout tables (e.g. the Main Page's content + sidebar): stack the columns */
+  .wiki-content .mw-parser-output > table:has(> tbody > tr > td > :is(div, table, ul, h2, h3)),
+  .wiki-content .mw-parser-output > table:has(> tbody > tr > td > :is(div, table, ul, h2, h3)) > tbody,
+  .wiki-content .mw-parser-output > table:has(> tbody > tr > td > :is(div, table, ul, h2, h3)) > tbody > tr,
+  .wiki-content .mw-parser-output > table:has(> tbody > tr > td > :is(div, table, ul, h2, h3)) > tbody > tr > td {
+    display: block;
+    width: 100% !important;
+  }
+  .wiki-content .mw-parser-output > table:has(> tbody > tr > td > :is(div, table, ul, h2, h3)) > tbody > tr > td {
+    padding: 0;
+  }
+}
+@media (max-width: 420px) {
+  .wiki-content [style*="column-count"] {
+    column-count: 1 !important;
+  }
+}
+.wiki-content table.wikitable,
+.wiki-content table.wikitable td,
+.wiki-content table.wikitable th {
+  border: 1px solid var(--border);
+}
+.wiki-content table.wikitable {
+  background: var(--panel);
+}
+.wiki-content table td,
+.wiki-content table th {
+  padding: 0.35em 0.6em;
+  vertical-align: middle;
+}
+.wiki-content table th,
+.wiki-content .tableheader {
+  background: var(--panel-2);
+  font-weight: 600;
+}
+.wiki-content [style*="background"] {
+  color: inherit;
+}
+.wiki-content .thumb {
+  margin: 0.5em 0;
+}
+.wiki-content .thumbinner {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  padding: 4px;
+  border-radius: 8px;
+  display: inline-block;
+}
+.wiki-content .thumbcaption {
+  font-size: 0.85em;
+  color: var(--muted);
+}
+.wiki-content .tright,
+.wiki-content .floatright {
+  float: right;
+  clear: right;
+  margin: 0 0 1em 1em;
+}
+.wiki-content .tleft,
+.wiki-content .floatleft {
+  float: left;
+  clear: left;
+  margin: 0 1em 1em 0;
+}
+.wiki-content .gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+}
+.wiki-content .gallerybox {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px;
+  text-align: center;
+}
+.wiki-content .mw-references-wrap,
+.wiki-content .references {
+  font-size: 0.85em;
+}
+.wiki-content pre {
+  background: var(--bg-soft);
+  padding: 0.75em;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+.wiki-content .digivolve-table td {
+  text-align: center;
+}
+.wiki-content .digivolve-level {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--muted);
+}
+
+/* Tiptap editor */
+.tiptap {
+  min-height: 320px;
+  outline: none;
+}
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--muted);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
 }

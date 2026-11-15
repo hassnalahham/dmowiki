@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DMO Wiki
 
-## Getting Started
+> [!WARNING]
+> ⚠️ **IMPORTANT**
+>
+> All data and content are sourced from [DMO Wiki](https://dmowiki.com).
 
-First, run the development server:
+A Next.js 16 rebuild of [dmowiki.com](https://dmowiki.com) with structured Digimon data, interactive
+evolution trees, an editing dashboard and built-in analytics.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Frontend:** Next.js App Router (Cache Components), Tailwind v4
+- **Database:** Neon Postgres + Drizzle ORM
+- **Images:** Cloudflare R2 (direct browser uploads via presigned URLs)
+- **Auth:** Better Auth (email/password, `admin` / `editor` roles, sign-up disabled)
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+> Private/personal project. The source wiki publishes no content license and asks for reference-only
+> use, so keep deployments private (the site sends `noindex`).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. `cp .env.example .env` and fill in:
+   - `DATABASE_URL` – Neon **pooled** connection string
+   - `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_URL`
+   - `BETTER_AUTH_SECRET` (`openssl rand -base64 32`), `BETTER_AUTH_URL`, `ANALYTICS_SALT`
+2. R2 bucket: enable public access (r2.dev or custom domain) and add a CORS rule so the dashboard can upload:
+   ```json
+   [
+     {
+       "AllowedOrigins": ["http://localhost:3000", "https://your-domain"],
+       "AllowedMethods": ["PUT"],
+       "AllowedHeaders": ["content-type"]
+     }
+   ]
+   ```
+3. `npm install && npm run db:migrate`
+4. Import the wiki:
+   ```bash
+   npm run import:fetch
+   npm run import:images
+   npm run import:load
+   ```
+5. `npm run create-admin -- --email you@example.com --password "a-strong-password" --name "You"`
 
-## Learn More
+6. How to get ANALYTICS_SALT and BETTER_AUTH_SECRET use : `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` or `openssl rand -hex 32` and copy it into the .env file make sure both are different (Generate the code 2 times)
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+7. `npm run dev` → site at `/`, dashboard at `/dashboard` (sign in at `/login`).
