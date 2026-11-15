@@ -33,14 +33,31 @@ evolution trees, an editing dashboard and built-in analytics.
    ]
    ```
 3. `npm install && npm run db:migrate`
+
 4. Import the wiki:
    ```bash
    npm run import:fetch
    npm run import:images
    npm run import:load
    ```
-5. `npm run create-admin -- --email you@example.com --password "a-strong-password" --name "You"`
+5. To create admin for the dashboard :
 
-6. How to get ANALYTICS_SALT and BETTER_AUTH_SECRET use : `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` or `openssl rand -hex 32` and copy it into the .env file make sure both are different (Generate the code 2 times)
+   ```bash
+      npm run create-admin -- --email you@example.com --password "a-strong-password" --name "You"
+   ```
+
+6. How to get ANALYTICS_SALT and BETTER_AUTH_SECRET use :
+
+   ```bash
+      node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+   ```
+
+   or
+
+   ```bash
+      openssl rand -hex 32
+   ```
+
+   and copy it into the .env file make sure both are different (Generate the code 2 times)
 
 7. `npm run dev` → site at `/`, dashboard at `/dashboard` (sign in at `/login`).
